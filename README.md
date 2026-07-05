@@ -37,7 +37,8 @@ We will place the JDK in a user-controlled folder `~/Documents/java_sdk` for por
 
 ---
 
-#### 🐧 Linux (Ubuntu/Debian)
+<details open>
+<summary>🐧 Linux (Ubuntu/Debian)</summary>
 
 ```bash
 # 1. Create the java_sdk folder
@@ -81,9 +82,10 @@ javac -version
 echo "JAVA_HOME=$JAVA_HOME"
 ```
 
----
+</details>
 
-#### 🪟 Windows (PowerShell as Admin)
+<details>
+<summary>🪟 Windows (PowerShell as Admin)</summary>
 
 ```powershell
 # 1. Create the java_sdk folder (if it doesn't exist)
@@ -128,9 +130,10 @@ javac -version
 echo "JAVA_HOME=$env:JAVA_HOME"
 ```
 
----
+</details>
 
-#### 🍎 macOS
+<details>
+<summary>🍎 macOS</summary>
 
 ```bash
 # 1. Create the java_sdk folder
@@ -177,19 +180,31 @@ echo "JAVA_HOME=$JAVA_HOME"
 > https://api.adoptium.net/v3/binary/latest/21/ga/mac/aarch64/jdk/hotspot/normal/eclipse?project=jdk
 > ```
 
+</details>
+
 ---
 
 ### 2. Install Android SDK
 
 #### 2.1 Create the Android SDK root folder
 
-```bash
-# Linux / macOS
-mkdir -p ~/Documents/android_sdk
+<details open>
+<summary>🐧 Linux / 🍎 macOS</summary>
 
-# Windows (PowerShell)
+```bash
+mkdir -p ~/Documents/android_sdk
+```
+
+</details>
+
+<details>
+<summary>🪟 Windows</summary>
+
+```powershell
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\Documents\android_sdk"
 ```
+
+</details>
 
 #### 2.2 Download Android Command-Line Tools
 
@@ -197,33 +212,41 @@ Download the latest Command-Line Tools from Google's official repository to your
 
 > **Latest version (as of 2026)**: `commandlinetools-*-14742923_latest.zip`
 
-##### 🐧 Linux
+<details open>
+<summary>🐧 Linux</summary>
 
 ```bash
 curl -L -o ~/Downloads/cmdline-tools.zip \
   "https://dl.google.com/android/repository/commandlinetools-linux-14742923_latest.zip"
 ```
 
-##### 🪟 Windows (PowerShell)
+</details>
+
+<details>
+<summary>🪟 Windows (PowerShell)</summary>
 
 ```powershell
 Invoke-WebRequest -Uri "https://dl.google.com/android/repository/commandlinetools-win-14742923_latest.zip" -OutFile "$env:USERPROFILE\Downloads\cmdline-tools.zip"
 ```
 
-##### 🍎 macOS
+</details>
+
+<details>
+<summary>🍎 macOS</summary>
 
 ```bash
 curl -L -o ~/Downloads/cmdline-tools.zip \
   "https://dl.google.com/android/repository/commandlinetools-mac-14742923_latest.zip"
 ```
 
----
+</details>
 
 #### 2.3 Extract and arrange folder structure
 
 The downloaded ZIP contains a `cmdline-tools/` folder. It must be restructured so that the tools reside in `android_sdk/cmdline-tools/latest/`.
 
-##### 🐧 Linux
+<details open>
+<summary>🐧 Linux</summary>
 
 ```bash
 # Create a temporary extraction folder
@@ -242,7 +265,10 @@ mv ~/Downloads/cmdline-tools-extract/cmdline-tools ~/Documents/android_sdk/cmdli
 rm -rf ~/Downloads/cmdline-tools.zip ~/Downloads/cmdline-tools-extract
 ```
 
-##### 🪟 Windows (PowerShell)
+</details>
+
+<details>
+<summary>🪟 Windows (PowerShell)</summary>
 
 ```powershell
 # Extract to a temp folder
@@ -259,7 +285,10 @@ Remove-Item "$env:USERPROFILE\Downloads\cmdline-tools.zip" -Force
 Remove-Item "$env:USERPROFILE\Downloads\cmdline-tools-extract" -Recurse -Force
 ```
 
-##### 🍎 macOS
+</details>
+
+<details>
+<summary>🍎 macOS</summary>
 
 ```bash
 # Create a temporary extraction folder
@@ -278,13 +307,14 @@ mv ~/Downloads/cmdline-tools-extract/cmdline-tools ~/Documents/android_sdk/cmdli
 rm -rf ~/Downloads/cmdline-tools.zip ~/Downloads/cmdline-tools-extract
 ```
 
----
+</details>
 
 #### 2.4 Use sdkmanager to install packages
 
 Now use the just-extracted `sdkmanager` to install and sync the `cmdline-tools;latest` package into the Android SDK root. The `--sdk_root` flag tells sdkmanager where the Android SDK is located. We also auto-accept licenses using `yes |`.
 
-##### 🐧 Linux / 🍎 macOS
+<details open>
+<summary>🐧 Linux / 🍎 macOS</summary>
 
 ```bash
 # Go to the android_sdk root folder
@@ -294,7 +324,10 @@ cd ~/Documents/android_sdk
 yes | ./cmdline-tools/latest/bin/sdkmanager --sdk_root="$HOME/Documents/android_sdk" "cmdline-tools;latest"
 ```
 
-##### 🪟 Windows (PowerShell)
+</details>
+
+<details>
+<summary>🪟 Windows (PowerShell)</summary>
 
 ```powershell
 # Go to the android_sdk root folder
@@ -304,6 +337,8 @@ cd "$env:USERPROFILE\Documents\android_sdk"
 echo y | .\cmdline-tools\latest\bin\sdkmanager.bat --sdk_root="$env:USERPROFILE\Documents\android_sdk" "cmdline-tools;latest"
 ```
 
+</details>
+
 > **What this does**: It uses the cmdline-tools to download and install the "cmdline-tools;latest" SDK package into your Android SDK root (`android_sdk`), ensuring you have the latest version installed in the correct location.
 
 ---
@@ -312,7 +347,8 @@ echo y | .\cmdline-tools\latest\bin\sdkmanager.bat --sdk_root="$env:USERPROFILE\
 
 Set `ANDROID_HOME` (and the deprecated alias `ANDROID_SDK_ROOT`) and add the important SDK tool directories to `PATH`.
 
-#### 🐧 Linux
+<details open>
+<summary>🐧 Linux</summary>
 
 Add to `~/.bashrc` (or `~/.zshrc`):
 
@@ -330,7 +366,10 @@ Apply:
 source ~/.bashrc   # or source ~/.zshrc
 ```
 
-#### 🪟 Windows
+</details>
+
+<details>
+<summary>🪟 Windows</summary>
 
 Run these commands in PowerShell (as Admin) to set user-level environment variables:
 
@@ -347,7 +386,10 @@ setx PATH "$env:PATH;$env:USERPROFILE\Documents\android_sdk\cmdline-tools\latest
 
 Restart PowerShell, then verify.
 
-#### 🍎 macOS
+</details>
+
+<details>
+<summary>🍎 macOS</summary>
 
 Add to `~/.zshrc`:
 
@@ -362,6 +404,8 @@ Apply:
 ```bash
 source ~/.zshrc
 ```
+
+</details>
 
 ---
 
