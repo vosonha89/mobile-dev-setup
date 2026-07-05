@@ -5,6 +5,11 @@ A comprehensive guide for setting up local development environment for mobile de
 ## Table of Contents
 
 - [Setup Android SDK for Local Development](#1-setup-android-sdk-for-local-development)
+  - [1. Install Java JDK](#1-prerequisites-install-java-jdk)
+  - [2. Install Android SDK](#2-install-android-sdk)
+  - [3. Install Gradle](#3-install-gradle)
+  - [4. Set Environment Variables](#4-set-environment-variables)
+  - [5. Verify Installation](#5-verify-installation)
 - [Setup iOS SDK for Local Development](#2-setup-ios-sdk-for-local-development)
 
 ---
@@ -343,9 +348,110 @@ echo y | .\cmdline-tools\latest\bin\sdkmanager.bat --sdk_root="$env:USERPROFILE\
 
 ---
 
-### 3. Set Environment Variables
+### 3. Install Gradle
 
-Set `ANDROID_HOME` (and the deprecated alias `ANDROID_SDK_ROOT`) and add the important SDK tool directories to `PATH`.
+Gradle is the build system used by Android. While most Android projects ship a Gradle wrapper (`./gradlew`), a standalone Gradle install is useful for `gradle init`, IDE references, and as a system-wide fallback.
+
+📖 **References**:
+- [Gradle Releases](https://gradle.org/releases/)
+- [Gradle Installation Guide](https://gradle.org/install/)
+
+We will place Gradle in a user-controlled folder `~/Documents/gradle` for portability and consistency (matching the layout of `java_sdk` and `android_sdk`).
+
+> **Which version?** — This guide uses **Gradle 8.10.2** as the example (a stable release). Check [gradle.org/releases](https://gradle.org/releases/) for the latest stable version and update the URL below if needed.
+
+#### 3.1 Download Gradle
+
+<details open>
+<summary>🐧 Linux / 🍎 macOS</summary>
+
+```bash
+curl -L -o ~/Downloads/gradle.zip \
+  "https://services.gradle.org/distributions/gradle-8.10.2-bin.zip"
+```
+
+</details>
+
+<details>
+<summary>🪟 Windows (PowerShell)</summary>
+
+```powershell
+Invoke-WebRequest -Uri "https://services.gradle.org/distributions/gradle-8.10.2-bin.zip" -OutFile "$env:USERPROFILE\Downloads\gradle.zip"
+```
+
+</details>
+
+#### 3.2 Extract Gradle
+
+<details open>
+<summary>🐧 Linux / 🍎 macOS</summary>
+
+```bash
+# Create the gradle folder
+mkdir -p ~/Documents/gradle
+
+# Extract into ~/Documents/gradle (strip the top-level folder so contents go directly into gradle)
+unzip -q ~/Downloads/gradle.zip -d ~/Documents/gradle-temp
+mv ~/Documents/gradle-temp/gradle-8.10.2/* ~/Documents/gradle/
+rm -rf ~/Documents/gradle-temp ~/Downloads/gradle.zip
+```
+
+</details>
+
+<details>
+<summary>🪟 Windows (PowerShell)</summary>
+
+```powershell
+# Create the gradle folder
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\Documents\gradle"
+
+# Extract to a temp folder
+Expand-Archive -Path "$env:USERPROFILE\Downloads\gradle.zip" -DestinationPath "$env:USERPROFILE\Documents\gradle-temp" -Force
+
+# Move extracted contents up one level into the gradle folder
+$extracted = Get-ChildItem "$env:USERPROFILE\Documents\gradle-temp" -Directory | Select-Object -First 1
+if ($extracted) {
+    Get-ChildItem -Path "$($extracted.FullName)" | Move-Item -Destination "$env:USERPROFILE\Documents\gradle" -Force
+    Remove-Item -Path "$($extracted.FullName)" -Force
+}
+
+# Clean up
+Remove-Item "$env:USERPROFILE\Downloads\gradle.zip" -Force
+Remove-Item "$env:USERPROFILE\Documents\gradle-temp" -Recurse -Force
+```
+
+</details>
+
+#### 3.3 Verify
+
+<details open>
+<summary>🐧 Linux / 🍎 macOS</summary>
+
+```bash
+~/Documents/gradle/bin/gradle --version
+```
+
+</details>
+
+<details>
+<summary>🪟 Windows (PowerShell)</summary>
+
+```powershell
+& "$env:USERPROFILE\Documents\gradle\bin\gradle.bat" --version
+```
+
+</details>
+
+You should see Gradle, Kotlin, and JVM version info printed. ✅
+
+> **Note**: For per-project builds, prefer the **Gradle Wrapper** (`./gradlew` / `gradlew.bat`). Each Android project pins its own Gradle version in `gradle/wrapper/gradle-wrapper.properties`. The standalone install above is useful for `gradle init` and as a system-wide fallback.
+
+---
+
+### 4. Set Environment Variables
+
+Set `ANDROID_HOME` (and the deprecated alias `ANDROID_SDK_ROOT`) and add the important SDK tool directories to `PATH`. We also set `GRADLE_HOME` and add Gradle's `bin` directory to `PATH`.
+
 
 <details open>
 <summary>🐧 Linux</summary>
@@ -356,6 +462,8 @@ Add to `~/.bashrc` (or `~/.zshrc`):
 echo 'export ANDROID_HOME="$HOME/Documents/android_sdk"' >> ~/.bashrc
 echo 'export ANDROID_SDK_ROOT="$ANDROID_HOME"' >> ~/.bashrc
 echo 'export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"' >> ~/.bashrc
+echo 'export GRADLE_HOME="$HOME/Documents/gradle"' >> ~/.bashrc
+echo 'export PATH="$GRADLE_HOME/bin:$PATH"' >> ~/.bashrc
 ```
 
 > If you're using Zsh, replace `~/.bashrc` with `~/.zshrc`.
@@ -382,6 +490,10 @@ setx ANDROID_SDK_ROOT "$env:USERPROFILE\Documents\android_sdk"
 
 # Add tool directories to PATH (user-level)
 setx PATH "$env:PATH;$env:USERPROFILE\Documents\android_sdk\cmdline-tools\latest\bin;$env:USERPROFILE\Documents\android_sdk\platform-tools;$env:USERPROFILE\Documents\android_sdk\emulator"
+
+# Set GRADLE_HOME and add Gradle to PATH
+setx GRADLE_HOME "$env:USERPROFILE\Documents\gradle"
+setx PATH "$env:PATH;$env:USERPROFILE\Documents\gradle\bin"
 ```
 
 Restart PowerShell, then verify.
@@ -397,6 +509,8 @@ Add to `~/.zshrc`:
 echo 'export ANDROID_HOME="$HOME/Documents/android_sdk"' >> ~/.zshrc
 echo 'export ANDROID_SDK_ROOT="$ANDROID_HOME"' >> ~/.zshrc
 echo 'export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"' >> ~/.zshrc
+echo 'export GRADLE_HOME="$HOME/Documents/gradle"' >> ~/.zshrc
+echo 'export PATH="$GRADLE_HOME/bin:$PATH"' >> ~/.zshrc
 ```
 
 Apply:
@@ -409,13 +523,13 @@ source ~/.zshrc
 
 ---
 
-### 4. Verify Installation
+### 5. Verify Installation
 
 > **Important**: If you opened a **new terminal** after setting the environment variables above, run `source ~/.bashrc` (Linux) or `source ~/.zshrc` (macOS) first to load them in the current session. On Windows, restart PowerShell.
 
-#### 4.1 List installed packages
+#### 5.1 List installed packages
 
-After setting environment variables (step 3), `sdkmanager` is on your PATH and knows the SDK root from `$ANDROID_HOME`.
+After setting environment variables (step 4), `sdkmanager` is on your PATH and knows the SDK root from `$ANDROID_HOME`.
 
 ```bash
 # Linux / macOS / Windows
@@ -424,7 +538,7 @@ sdkmanager --list_installed
 
 You should see output listing the installed SDK packages (e.g., `cmdline-tools;latest`). ✅
 
-#### 4.2 Accept licenses
+#### 5.2 Accept licenses
 
 ```bash
 sdkmanager --licenses
@@ -432,7 +546,7 @@ sdkmanager --licenses
 
 Type `y` to accept all license agreements when prompted.
 
-#### 4.3 Verify Java and Android environment
+#### 5.3 Verify development environment
 
 ```bash
 # Check Java
@@ -443,6 +557,10 @@ echo "JAVA_HOME=$JAVA_HOME"
 # Check Android SDK
 echo "ANDROID_HOME=$ANDROID_HOME"
 echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+
+# Check Gradle
+gradle --version
+echo "GRADLE_HOME=$GRADLE_HOME"
 ```
 
 ---
