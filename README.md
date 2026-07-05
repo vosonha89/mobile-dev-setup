@@ -29,9 +29,9 @@ Android development requires a **Java JDK** (Java Development Kit). There are mu
 | **Eclipse Temurin** (formerly AdoptOpenJDK) | Open-source, TCK-certified, free | https://adoptium.net/ |
 | **Oracle JDK** | Official Oracle build, free for development | https://www.oracle.com/java/technologies/downloads/ |
 | **Amazon Corretto** | OpenJDK build by AWS, free | https://aws.amazon.com/corretto/ |
-| **OpenJDK** | Reference implementation via package manager | `sudo apt install openjdk-25-jdk` (Linux) / `brew install openjdk` (macOS) |
+| **OpenJDK** | Reference implementation via package manager | `sudo apt install openjdk-21-jdk` (Linux) / `brew install openjdk` (macOS) |
 
-> **Which JDK version?** — The latest JDK LTS version as of 2026 is **JDK 25**. The guide below uses **Eclipse Temurin JDK 25** as the example. If you prefer a different LTS version (e.g., JDK 21) or a different provider, adjust the download URLs accordingly.
+> **Which JDK version?** — The recommended LTS version for Android development is **JDK 21**. The guide below uses **Eclipse Temurin JDK 21** as the example. If you prefer a different provider or version, adjust the download URLs accordingly.
 
 We will place the JDK in a user-controlled folder `~/Documents/java_sdk` for portability and consistency.
 
@@ -43,9 +43,9 @@ We will place the JDK in a user-controlled folder `~/Documents/java_sdk` for por
 # 1. Create the java_sdk folder
 mkdir -p ~/Documents/java_sdk
 
-# 2. Download the latest Eclipse Temurin JDK 25 LTS (.tar.gz)
+# 2. Download the latest Eclipse Temurin JDK 21 LTS (.tar.gz)
 curl -L -o /tmp/jdk.tar.gz \
-  "https://api.adoptium.net/v3/binary/latest/25/ga/linux/x64/jdk/hotspot/normal/eclipse?project=jdk"
+  "https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jdk/hotspot/normal/eclipse?project=jdk"
 
 # 3. Extract into ~/Documents/java_sdk (strip the top-level folder so contents go directly into java_sdk)
 tar -xzf /tmp/jdk.tar.gz -C ~/Documents/java_sdk --strip-components=1
@@ -87,13 +87,13 @@ echo "JAVA_HOME=$JAVA_HOME"
 # 1. Create the java_sdk folder (if it doesn't exist)
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\Documents\java_sdk"
 
-# 2. Download the latest Eclipse Temurin JDK 25 LTS (.zip)
-Invoke-WebRequest -Uri "https://api.adoptium.net/v3/binary/latest/25/ga/windows/x64/jdk/hotspot/normal/eclipse?project=jdk" -OutFile "$env:TEMP\jdk.zip"
+# 2. Download the latest Eclipse Temurin JDK 21 LTS (.zip)
+Invoke-WebRequest -Uri "https://api.adoptium.net/v3/binary/latest/21/ga/windows/x64/jdk/hotspot/normal/eclipse?project=jdk" -OutFile "$env:TEMP\jdk.zip"
 
 # 3. Extract into %USERPROFILE%\Documents\java_sdk
 Expand-Archive -Path "$env:TEMP\jdk.zip" -DestinationPath "$env:USERPROFILE\Documents\java_sdk" -Force
 
-# 4. If the contents are inside a subfolder (e.g., jdk-25.*), move them up one level:
+# 4. If the contents are inside a subfolder (e.g., jdk-21.*), move them up one level:
 $extracted = Get-ChildItem "$env:USERPROFILE\Documents\java_sdk" -Directory | Select-Object -First 1
 if ($extracted -and $extracted.Name -like "jdk*") {
     Get-ChildItem -Path "$($extracted.FullName)" | Move-Item -Destination "$env:USERPROFILE\Documents\java_sdk" -Force
@@ -134,9 +134,9 @@ echo "JAVA_HOME=$env:JAVA_HOME"
 # 1. Create the java_sdk folder
 mkdir -p ~/Documents/java_sdk
 
-# 2. Download the latest Eclipse Temurin JDK 25 LTS (.tar.gz)
+# 2. Download the latest Eclipse Temurin JDK 21 LTS (.tar.gz)
 curl -L -o /tmp/jdk.tar.gz \
-  "https://api.adoptium.net/v3/binary/latest/25/ga/mac/x64/jdk/hotspot/normal/eclipse?project=jdk"
+  "https://api.adoptium.net/v3/binary/latest/21/ga/mac/x64/jdk/hotspot/normal/eclipse?project=jdk"
 
 # 3. Extract into ~/Documents/java_sdk (strip the top-level folder)
 tar -xzf /tmp/jdk.tar.gz -C ~/Documents/java_sdk --strip-components=1
@@ -172,7 +172,7 @@ echo "JAVA_HOME=$JAVA_HOME"
 
 > **Note for Apple Silicon (M1/M2/M3) Macs**: The URL above fetches the x64 build. For native ARM build, replace `mac/x64` with `mac/aarch64` in the URL:
 > ```
-> https://api.adoptium.net/v3/binary/latest/25/ga/mac/aarch64/jdk/hotspot/normal/eclipse?project=jdk
+> https://api.adoptium.net/v3/binary/latest/21/ga/mac/aarch64/jdk/hotspot/normal/eclipse?project=jdk
 > ```
 
 ---
