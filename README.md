@@ -280,7 +280,7 @@ rm -rf ~/Downloads/cmdline-tools.zip ~/Downloads/cmdline-tools-extract
 
 #### 2.4 Use sdkmanager to install packages
 
-Now use the just-extracted `sdkmanager` to install and sync the `cmdline-tools;latest` package into the Android SDK root. The `--sdk_root` flag tells sdkmanager where the Android SDK is located.
+Now use the just-extracted `sdkmanager` to install and sync the `cmdline-tools;latest` package into the Android SDK root. The `--sdk_root` flag tells sdkmanager where the Android SDK is located. We also auto-accept licenses using `yes |`.
 
 ##### 🐧 Linux / 🍎 macOS
 
@@ -288,8 +288,8 @@ Now use the just-extracted `sdkmanager` to install and sync the `cmdline-tools;l
 # Go to the android_sdk root folder
 cd ~/Documents/android_sdk
 
-# Install the cmdline-tools;latest package into the Android SDK root
-./cmdline-tools/latest/bin/sdkmanager --sdk_root="$HOME/Documents/android_sdk" "cmdline-tools;latest"
+# Install the cmdline-tools;latest package into the Android SDK root (auto-accept licenses)
+yes | ./cmdline-tools/latest/bin/sdkmanager --sdk_root="$HOME/Documents/android_sdk" "cmdline-tools;latest"
 ```
 
 ##### 🪟 Windows (PowerShell)
@@ -298,8 +298,8 @@ cd ~/Documents/android_sdk
 # Go to the android_sdk root folder
 cd "$env:USERPROFILE\Documents\android_sdk"
 
-# Install the cmdline-tools;latest package into the Android SDK root
-.\cmdline-tools\latest\bin\sdkmanager.bat --sdk_root="$env:USERPROFILE\Documents\android_sdk" "cmdline-tools;latest"
+# Install the cmdline-tools;latest package into the Android SDK root (auto-accept licenses)
+echo y | .\cmdline-tools\latest\bin\sdkmanager.bat --sdk_root="$env:USERPROFILE\Documents\android_sdk" "cmdline-tools;latest"
 ```
 
 > **What this does**: It uses the cmdline-tools to download and install the "cmdline-tools;latest" SDK package into your Android SDK root (`android_sdk`), ensuring you have the latest version installed in the correct location.
@@ -360,6 +360,8 @@ source ~/.zshrc
 ---
 
 ### 4. Verify Installation
+
+> **Important**: If you opened a **new terminal** after setting the environment variables above, run `source ~/.bashrc` (Linux) or `source ~/.zshrc` (macOS) first to load them in the current session. On Windows, restart PowerShell.
 
 #### 4.1 List installed packages
 
