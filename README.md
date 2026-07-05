@@ -280,29 +280,29 @@ rm -rf ~/Downloads/cmdline-tools.zip ~/Downloads/cmdline-tools-extract
 
 #### 2.4 Use sdkmanager to install packages
 
-Now use the just-extracted `sdkmanager` to install and sync the `cmdline-tools;latest` package into the Android SDK root.
+Now use the just-extracted `sdkmanager` to install and sync the `cmdline-tools;latest` package into the Android SDK root. The `--sdk_root` flag tells sdkmanager where the Android SDK is located.
 
 ##### 🐧 Linux / 🍎 macOS
 
 ```bash
-# Go to the sdkmanager location
-cd ~/Documents/android_sdk/cmdline-tools/latest/bin
+# Go to the android_sdk root folder
+cd ~/Documents/android_sdk
 
-# Install the cmdline-tools;latest package (this finalises the setup)
-./sdkmanager "cmdline-tools;latest"
+# Install the cmdline-tools;latest package into the Android SDK root
+./cmdline-tools/latest/bin/sdkmanager --sdk_root="$HOME/Documents/android_sdk" "cmdline-tools;latest"
 ```
 
 ##### 🪟 Windows (PowerShell)
 
 ```powershell
-# Go to the sdkmanager location
-cd "$env:USERPROFILE\Documents\android_sdk\cmdline-tools\latest\bin"
+# Go to the android_sdk root folder
+cd "$env:USERPROFILE\Documents\android_sdk"
 
-# Install the cmdline-tools;latest package
-.\sdkmanager.bat "cmdline-tools;latest"
+# Install the cmdline-tools;latest package into the Android SDK root
+.\cmdline-tools\latest\bin\sdkmanager.bat --sdk_root="$env:USERPROFILE\Documents\android_sdk" "cmdline-tools;latest"
 ```
 
-> **What this does**: It uses the cmdline-tools to download and install the "cmdline-tools;latest" SDK package into your Android SDK folder, ensuring you have the latest version.
+> **What this does**: It uses the cmdline-tools to download and install the "cmdline-tools;latest" SDK package into your Android SDK root (`android_sdk`), ensuring you have the latest version installed in the correct location.
 
 ---
 
@@ -363,18 +363,11 @@ source ~/.zshrc
 
 #### 4.1 List installed packages
 
-##### 🐧 Linux / 🍎 macOS
+After setting environment variables (step 3), `sdkmanager` is on your PATH and knows the SDK root from `$ANDROID_HOME`.
 
 ```bash
-cd ~/Documents/android_sdk
-./cmdline-tools/latest/bin/sdkmanager --list_installed
-```
-
-##### 🪟 Windows (PowerShell)
-
-```powershell
-cd "$env:USERPROFILE\Documents\android_sdk"
-.\cmdline-tools\latest\bin\sdkmanager.bat --list_installed
+# Linux / macOS / Windows
+sdkmanager --list_installed
 ```
 
 You should see output listing the installed SDK packages (e.g., `cmdline-tools;latest`). ✅
@@ -382,11 +375,7 @@ You should see output listing the installed SDK packages (e.g., `cmdline-tools;l
 #### 4.2 Accept licenses
 
 ```bash
-# Linux / macOS
 sdkmanager --licenses
-
-# Windows
-sdkmanager.bat --licenses
 ```
 
 Type `y` to accept all license agreements when prompted.
