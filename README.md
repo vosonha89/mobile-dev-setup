@@ -22,9 +22,18 @@ This guide covers Android SDK setup for **Linux 🐧**, **Windows 🪟**, and **
 
 ### 1. Prerequisites: Install Java JDK
 
-Android development requires a **Java JDK** (Java Development Kit). We will install the latest LTS JDK and place it in a user-controlled folder `~/Documents/java_sdk` for portability and consistency.
+Android development requires a **Java JDK** (Java Development Kit). There are multiple sources to obtain the JDK:
 
-> **Which JDK version?** — The latest JDK LTS version as of 2026 is **JDK 25** (Eclipse Temurin). This is the one used below. If you need a different LTS (e.g., JDK 21), replace `25` in the URLs with `21`.
+| Source | Description | Download |
+|--------|-------------|----------|
+| **Eclipse Temurin** (formerly AdoptOpenJDK) | Open-source, TCK-certified, free | https://adoptium.net/ |
+| **Oracle JDK** | Official Oracle build, free for development | https://www.oracle.com/java/technologies/downloads/ |
+| **Amazon Corretto** | OpenJDK build by AWS, free | https://aws.amazon.com/corretto/ |
+| **OpenJDK** | Reference implementation via package manager | `sudo apt install openjdk-25-jdk` (Linux) / `brew install openjdk` (macOS) |
+
+> **Which JDK version?** — The latest JDK LTS version as of 2026 is **JDK 25**. The guide below uses **Eclipse Temurin JDK 25** as the example. If you prefer a different LTS version (e.g., JDK 21) or a different provider, adjust the download URLs accordingly.
+
+We will place the JDK in a user-controlled folder `~/Documents/java_sdk` for portability and consistency.
 
 ---
 
