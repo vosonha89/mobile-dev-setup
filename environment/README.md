@@ -358,7 +358,7 @@ Gradle is the build system used by Android. While most Android projects ship a G
 
 We will place Gradle in a user-controlled folder `~/Documents/gradle` for portability and consistency (matching the layout of `java_sdk` and `android_sdk`).
 
-> **Which version?** — This guide uses **Gradle 8.10.2** as the example (a stable release). Check [gradle.org/releases](https://gradle.org/releases/) for the latest stable version and update the URL below if needed.
+> **Which version?** — This guide uses **Gradle 9.6.1** as the example (compatible with latest React Native). Check [gradle.org/releases](https://gradle.org/releases/) for the latest stable version and update the URL below if needed.
 
 #### 3.1 Download Gradle
 
@@ -367,7 +367,7 @@ We will place Gradle in a user-controlled folder `~/Documents/gradle` for portab
 
 ```bash
 curl -L -o ~/Downloads/gradle.zip \
-  "https://services.gradle.org/distributions/gradle-8.10.2-bin.zip"
+  "https://services.gradle.org/distributions/gradle-9.6.1-bin.zip"
 ```
 
 </details>
@@ -376,7 +376,7 @@ curl -L -o ~/Downloads/gradle.zip \
 <summary>🪟 Windows (PowerShell)</summary>
 
 ```powershell
-Invoke-WebRequest -Uri "https://services.gradle.org/distributions/gradle-8.10.2-bin.zip" -OutFile "$env:USERPROFILE\Downloads\gradle.zip"
+Invoke-WebRequest -Uri "https://services.gradle.org/distributions/gradle-9.6.1-bin.zip" -OutFile "$env:USERPROFILE\Downloads\gradle.zip"
 ```
 
 </details>
@@ -392,7 +392,7 @@ mkdir -p ~/Documents/gradle
 
 # Extract into ~/Documents/gradle (strip the top-level folder so contents go directly into gradle)
 unzip -q ~/Downloads/gradle.zip -d ~/Documents/gradle-temp
-mv ~/Documents/gradle-temp/gradle-8.10.2/* ~/Documents/gradle/
+mv ~/Documents/gradle-temp/gradle-9.6.1/* ~/Documents/gradle/
 rm -rf ~/Documents/gradle-temp ~/Downloads/gradle.zip
 ```
 
