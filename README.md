@@ -61,9 +61,11 @@ rm /tmp/jdk.tar.gz
 **Set JAVA_HOME and PATH** — Add the following lines to `~/.bashrc` (or `~/.zshrc` if using Zsh):
 
 ```bash
-export JAVA_HOME="$HOME/Documents/java_sdk"
-export PATH="$JAVA_HOME/bin:$PATH"
+echo 'export JAVA_HOME="$HOME/Documents/java_sdk"' >> ~/.bashrc
+echo 'export PATH="$JAVA_HOME/bin:$PATH"' >> ~/.bashrc
 ```
+
+> If you're using Zsh, replace `~/.bashrc` with `~/.zshrc`.
 
 Apply the changes:
 
@@ -108,17 +110,17 @@ Remove-Item "$env:TEMP\jdk.zip" -Force
 & "$env:USERPROFILE\Documents\java_sdk\bin\javac" -version
 ```
 
-**Set JAVA_HOME and PATH** (System Environment Variables):
+**Set JAVA_HOME and PATH** — Run these commands in PowerShell (as Admin) to set user-level environment variables:
 
-1. Open **System Properties** → **Environment Variables**
-2. Under **System variables**, click **New**:
-   - **Variable name**: `JAVA_HOME`
-   - **Variable value**: `C:\Users\<YOUR_USER>\Documents\java_sdk`
-3. Find the **Path** variable, click **Edit**, then **New**, and add:
-   - `%JAVA_HOME%\bin`
-4. Click **OK** on all dialogs, then restart PowerShell.
+```powershell
+# Set JAVA_HOME (user-level environment variable)
+setx JAVA_HOME "$env:USERPROFILE\Documents\java_sdk"
 
-Verify:
+# Add %JAVA_HOME%\bin to PATH (user-level)
+setx PATH "$env:PATH;$env:USERPROFILE\Documents\java_sdk\bin"
+```
+
+Restart PowerShell, then verify:
 
 ```powershell
 java -version
@@ -152,8 +154,8 @@ rm /tmp/jdk.tar.gz
 **Set JAVA_HOME and PATH** — Add the following lines to `~/.zshrc`:
 
 ```bash
-export JAVA_HOME="$HOME/Documents/java_sdk"
-export PATH="$JAVA_HOME/bin:$PATH"
+echo 'export JAVA_HOME="$HOME/Documents/java_sdk"' >> ~/.zshrc
+echo 'export PATH="$JAVA_HOME/bin:$PATH"' >> ~/.zshrc
 ```
 
 Apply the changes:
@@ -315,10 +317,12 @@ Set `ANDROID_HOME` (and the deprecated alias `ANDROID_SDK_ROOT`) and add the imp
 Add to `~/.bashrc` (or `~/.zshrc`):
 
 ```bash
-export ANDROID_HOME="$HOME/Documents/android_sdk"
-export ANDROID_SDK_ROOT="$ANDROID_HOME"         # legacy alias
-export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+echo 'export ANDROID_HOME="$HOME/Documents/android_sdk"' >> ~/.bashrc
+echo 'export ANDROID_SDK_ROOT="$ANDROID_HOME"' >> ~/.bashrc
+echo 'export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"' >> ~/.bashrc
 ```
+
+> If you're using Zsh, replace `~/.bashrc` with `~/.zshrc`.
 
 Apply:
 
@@ -328,27 +332,29 @@ source ~/.bashrc   # or source ~/.zshrc
 
 #### 🪟 Windows
 
-1. Open **System Properties** → **Environment Variables**
-2. Under **System variables**, click **New**:
-   - **Variable name**: `ANDROID_HOME`
-   - **Variable value**: `C:\Users\<YOUR_USER>\Documents\android_sdk`
-3. Add another:
-   - **Variable name**: `ANDROID_SDK_ROOT`
-   - **Variable value**: `C:\Users\<YOUR_USER>\Documents\android_sdk`
-4. Find the **Path** variable, click **Edit**, then **New** for each:
-   - `%ANDROID_HOME%\cmdline-tools\latest\bin`
-   - `%ANDROID_HOME%\platform-tools`
-   - `%ANDROID_HOME%\emulator`
-5. Click **OK**, restart PowerShell.
+Run these commands in PowerShell (as Admin) to set user-level environment variables:
+
+```powershell
+# Set ANDROID_HOME
+setx ANDROID_HOME "$env:USERPROFILE\Documents\android_sdk"
+
+# Set ANDROID_SDK_ROOT (legacy alias)
+setx ANDROID_SDK_ROOT "$env:USERPROFILE\Documents\android_sdk"
+
+# Add tool directories to PATH (user-level)
+setx PATH "$env:PATH;$env:USERPROFILE\Documents\android_sdk\cmdline-tools\latest\bin;$env:USERPROFILE\Documents\android_sdk\platform-tools;$env:USERPROFILE\Documents\android_sdk\emulator"
+```
+
+Restart PowerShell, then verify.
 
 #### 🍎 macOS
 
 Add to `~/.zshrc`:
 
 ```bash
-export ANDROID_HOME="$HOME/Documents/android_sdk"
-export ANDROID_SDK_ROOT="$ANDROID_HOME"         # legacy alias
-export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+echo 'export ANDROID_HOME="$HOME/Documents/android_sdk"' >> ~/.zshrc
+echo 'export ANDROID_SDK_ROOT="$ANDROID_HOME"' >> ~/.zshrc
+echo 'export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"' >> ~/.zshrc
 ```
 
 Apply:
