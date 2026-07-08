@@ -567,22 +567,284 @@ echo "GRADLE_HOME=$GRADLE_HOME"
 
 ## 2. Setup iOS SDK for Local Development
 
-### Prerequisites
+> 🍎 macOS-only — the iOS SDK ships with Xcode, which is distributed exclusively
+>   for macOS via the App Store and developer.apple.com.
 
-<!-- TODO: Add prerequisites for iOS SDK setup -->
-- _Content to be provided_
+📖 **References**:
+- [Xcode (Official)](https://developer.apple.com/xcode/)
+- [Command Line Tools for Xcode](https://developer.apple.com/download/all/)
+- [xcode-install (Fastlane)](https://github.com/fastlane/xcode-install)
+- [CocoaPods](https://cocoapods.org/)
 
-### Installation Steps
+---
 
-<!-- TODO: Add iOS SDK installation steps -->
-- _Content to be provided_
+### 1. Prerequisites
 
-### Environment Variables
+| Requirement | Details |
+|-------------|---------|
+| **macOS host** | Apple Silicon or Intel Mac. Xcode 26.3 requires **macOS 16 Tahoe**; Xcode 26.0/26.1 also run on **macOS 15 Sequoia**. |
+| **Apple ID** | Free Apple ID is sufficient for the SDK, simulators, and code signing. A paid **Apple Developer Program** membership ($99/yr) is only required to deploy to a physical device or publish to the App Store / TestFlight. |
+| **Disk space** | ~50 GB free (Xcode ~15 GB + simulators ~10-20 GB + tooling). |
+| **Admin access** | Required to install system components and accept Xcode licenses. |
 
-<!-- TODO: Add environment variables configuration for iOS SDK -->
-- _Content to be provided_
+---
 
-### Verification
+### 2. Install Command Line Tools for Xcode (CLT)
 
-<!-- TODO: Add steps to verify iOS SDK installation -->
-- _Content to be provided_
+The Command Line Tools are a lightweight (~1 GB) prerequisite that provides `git`, `clang`, `make`, and other essential build tools. Install them **before** Xcode.
+
+<details open>
+<summary>Method A — Interactive GUI prompt (simplest)</summary>
+
+```bash
+xcode-select --install
+```
+
+A pop-up dialog will appear. Click **Install** and wait for the download to complete.
+
+</details>
+
+<details>
+<summary>Method B — Scriptable via `softwareupdate`</summary>
+
+```bash
+# 1. Check what's already installed
+softwareupdate --history | grep -i "command line tools"
+
+# 2. Install (or update) Command Line Tools
+sudo softwareupdate -i "Command Line Tools for Xcode-26.3"
+```
+
+> Replace `26.3` with the exact version string shown by `softwareupdate --list`.
+
+</details>
+
+**Verify CLT installation:**
+
+```bash
+xcode-select -p
+# Expected: /Library/Developer/CommandLineTools
+
+clang --version
+# Expected: Apple clang version 17.x (or similar)
+```
+
+If `xcode-select -p` returns an error, re-run the install command above.
+
+---
+
+### 3. Install Xcode 26.3
+
+Xcode is the full IDE (~15-35 GB) that contains the iOS SDK, simulators, and all development tools.
+
+<details open>
+<summary>Method A — Mac App Store (simplest, GUI)</summary>
+
+```bash
+# Open the App Store directly to the Xcode page
+open "macappstore://apps.apple.com/app/xcode/id497799835"
+```
+
+Click **Get / Install** and wait for the download to complete. Xcode will be placed in `/Applications/Xcode.app` by default.
+
+</details>
+
+<details>
+<summary>Method B — `xcode-install` gem (scriptable, CI-friendly)</summary>
+
+```bash
+# 1. Install xcode-install via Homebrew
+brew install xcode-install
+
+# 2. Install Xcode 26.3 (downloads + installs automatically)
+xcversion install 26.3
+
+# 3. (Optional) List all installed Xcode versions
+xcversion list
+```
+
+`xcode-install` automatically renames the app to `/Applications/Xcode-26.3.app`, allowing multiple Xcode versions to coexist. Use `xcversion select 26.3` to switch the active version.
+
+</details>
+
+> **Note**: Xcode 27 is currently in **BETA** (announced at WWDC 2026). If you want to preview the next major release, download it from [developer.apple.com/download](https://developer.apple.com/download/all/). For production development, stick with **Xcode 26.3** (stable).
+
+---
+
+### 4. Select Active Developer Directory
+
+After installing Xcode, tell the system which version to use:
+
+```bash
+# Point the active developer directory to Xcode 26.3
+sudo xcode-select -s /Applications/Xcode-26.3.app/Contents/Developer
+
+# Accept the Xcode license agreement (required for CLI tools)
+sudo xcodebuild -license accept
+
+# Run first-launch setup (installs additional components)
+xcodebuild -runFirstLaunch
+```
+
+**Verify:**
+
+```bash
+xcode-select -p
+# Expected: /Applications/Xcode-26.3.app/Contents/Developer
+```
+
+---
+
+### 5. Install iOS Simulators
+
+Simulators let you test iOS apps on your Mac without a physical device.
+
+```bash
+# 1. List currently installed simulator runtimes
+xcrun simctl list runtimes
+
+# 2. Download the latest iOS platform (e.g., iOS 26)
+xcodebuild -downloadPlatform iOS
+
+# 3. Create a new simulator device
+xcrun simctl create "iPhone 17 Pro" "iPhone 17 Pro" "com.apple.CoreSimulator.SimRuntime.iOS-26-0"
+
+# 4. List available devices to confirm
+xcrun simctl list devices available
+```
+
+**GUI alternative:** Open Xcode → **Settings** → **Platforms** / **Devices** to browse and download additional simulator runtimes (iOS 26, iOS 25, watchOS, tvOS, etc.).
+
+---
+
+### 6. (Optional) Install iOS Tooling
+
+These tools are commonly needed for iOS/React Native development but are not strictly required for the SDK itself.
+
+#### 6.1 Homebrew (package manager)
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Add Homebrew to your `PATH` as instructed by the installer, then run `brew doctor` to verify.
+
+#### 6.2 Ruby via rbenv (recommended)
+
+macOS's system Ruby is outdated and fragile. Use `rbenv` to manage a modern Ruby version (≥ 3.0) for CocoaPods and Fastlane:
+
+```bash
+# Install rbenv + ruby-build
+brew install rbenv ruby-build
+
+# Initialize rbenv
+echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
+echo 'eval "$(rbenv init -)"' >> ~/.zshrc
+source ~/.zshrc
+
+# Install Ruby 3.3.x (or latest stable)
+rbenv install 3.3.6
+rbenv global 3.3.6
+
+# Verify
+ruby --version
+# Expected: ruby 3.3.x
+```
+
+#### 6.3 CocoaPods (dependency manager for iOS projects)
+
+```bash
+# Via Homebrew (preferred)
+brew install cocoapods
+
+# Or via gem (requires rbenv Ruby)
+gem install cocoapods
+
+# Verify
+pod --version
+```
+
+#### 6.4 Fastlane (automation for iOS builds)
+
+```bash
+brew install fastlane
+
+# Verify
+fastlane --version
+```
+
+#### 6.5 Watchman (file watcher, recommended for React Native)
+
+```bash
+brew install watchman
+
+# Verify
+watchman --version
+```
+
+#### 6.6 ios-deploy (deploy to physical device from CLI)
+
+```bash
+npm i -g ios-deploy
+
+# Verify
+ios-deploy --version
+```
+
+---
+
+### 7. Set Environment Variables
+
+Add the following to `~/.zshrc` (or `~/.bash_profile` on older macOS versions):
+
+```bash
+# iOS / Xcode developer toolchain
+export DEVELOPER_DIR="/Applications/Xcode-26.3.app/Contents/Developer"
+export PATH="$DEVELOPER_DIR/usr/bin:$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin:$PATH"
+
+# rbenv (if installed in step 6.2)
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+```
+
+**Apply the changes:**
+
+```bash
+source ~/.zshrc
+```
+
+> **Note**: We expose the `Contents/Developer` toolchain subfolder rather than the `.app` bundle itself. `.app` directories are macOS application bundles and cannot be added directly to `PATH`.
+
+---
+
+### 8. Verify Installation
+
+Run the following commands to confirm everything is set up correctly:
+
+```bash
+# Xcode version
+xcodebuild -version
+# Expected: Xcode 26.3, Build version …
+
+# Active developer directory
+xcode-select -p
+# Expected: /Applications/Xcode-26.3.app/Contents/Developer
+
+# Swift compiler
+swift --version
+# Expected: Swift 6.x
+
+# Clang compiler
+clang --version
+# Expected: Apple clang 17.x
+
+# Available simulators
+xcrun simctl list devices available
+
+# Optional tooling (if installed)
+pod --version          # CocoaPods 1.16+
+fastlane --version     # fastlane 2.22x
+watchman --version     # watchman 2026.x
+```
+
+If all commands return version info without errors, your iOS SDK setup is complete. ✅
